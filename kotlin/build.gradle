@@ -1,0 +1,129 @@
+
+plugins {
+  id 'application'
+  alias libs.plugins.testLogger
+  alias libs.plugins.dockerCompose
+  alias libs.plugins.protobuf
+  alias libs.plugins.jooq
+  alias libs.plugins.kotlin
+  alias libs.plugins.flyway
+}
+
+repositories {
+  mavenCentral()
+  google()
+  maven {
+    url = "https://mvnrepository.com/artfiact/com.zaxxer/HikariCP"
+  }
+}
+
+group = 'com.github.fidgetting'
+version = '0.0.1'
+
+test {
+  useJUnitPlatform()
+}
+
+kotlin {
+  jvmToolchain(21)
+}
+
+application {
+  mainClassName = 'MainKt'
+}
+
+dependencies {
+  implementation libs.bundles.database
+  implementation libs.bundles.protobuf
+  implementation libs.bundles.logging
+  implementation libs.bundles.kotlin
+
+  jooqGenerator libs.postgresql
+
+  testImplementation libs.kotlinTest
+}
+
+testlogger {
+  showFullStackTraces = true
+  showPassed = true
+  showSkipped = true
+  showFailed = true
+  showSummary = true
+  slowThreshold = 1000
+  logLevel = LogLevel.QUIET
+}
+
+dockerCompose {
+  setProjectName("db-schema")
+}
+
+protobuf {
+  protoc {
+    artifact = "com.google.protobuf:protoc:${libs.versions.protobuf.get()}"
+  }
+  plugins {
+    grpc {
+      artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc.get()}"
+    }
+    grpckt {
+      artifact = "io.grpc:protoc-gen-grpc-kotlin:${libs.versions.grpcKotlin.get()}:jdk8@jar"
+    }
+  }
+  generateProtoTasks {
+    all().forEach {
+      it.plugins {
+        grpc { }
+        grpckt { }
+      }
+      it.builtins {
+        kotlin { }
+      }
+    }
+  }
+}
+
+flyway {
+  driver = "org.postgresql.Driver"
+  url = "jdbc:postgresql://localhost:5433/postgres"
+  user= "anorton"
+  password = "anorton"
+}
+
+jooq {
+  configurations {
+    main {
+      generationTool {
+        logging = org.jooq.meta.jaxb.Logging.WARN
+        jdbc {
+          driver = "org.postgresql.Driver"
+          url = "jdbc:postgresql://localhost:5433/postgres"
+          user= "anorton"
+          password = "anorton"
+        }
+        generator {
+          name = "org.jooq.codegen.KotlinGenerator"
+          database {
+            name = "org.jooq.meta.postgres.PostgresDatabase"
+            inputSchema = "public"
+          }
+          target {
+            packageName = "com.github.fidgetting.schema"
+          }
+          generate {
+            kotlinNotNullPojoAttributes = true
+            kotlinNotNullRecordAttributes = true
+            kotlinNotNullInterfaceAttributes = true
+         }
+       }
+     }
+   }
+  }
+}
+
+tasks.named("flywayMigrate").configure {
+  dependsOn tasks.named("composeUp")
+}
+
+tasks.named("generateJooq").configure {
+  dependsOn tasks.named("flywayMigrate")
+}

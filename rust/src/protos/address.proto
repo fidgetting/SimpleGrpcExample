@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package address;
+
+message Address {
+  uint64 id = 1;
+
+  repeated string lines = 2;
+
+  string postal_code = 3;
+
+  string city = 4;
+
+  string state = 5;
+
+  string region = 6;
+}

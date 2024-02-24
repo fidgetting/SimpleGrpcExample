@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package com.github.fidgetting.kotlin;
+
+import "address.proto";
+
+service AddressService {
+  rpc getAddress(GetAddressRequest) returns (GetAddressResponse);
+  rpc setAddress(SetAddressRequest) returns (SetAddressResponse);
+  rpc removeAddress(RemoveAddressRequest) returns (RemoveAddressResponse);
+}
+
+message GetAddressRequest {
+  uint64 id = 1;
+}
+
+message GetAddressResponse {
+  Address address = 1;
+}
+
+message SetAddressRequest {
+  Address address = 1;
+}
+
+message SetAddressResponse {
+  Address address = 1;
+}
+
+message RemoveAddressRequest {
+  uint64 id = 1;
+}
+
+message RemoveAddressResponse {
+  Address address = 1;
+}

@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  db-schema-db:
+    container_name: simple-grpc-db
+    image: postgres
+    environment:
+      POSTGRES_USER: anorton
+      POSTGRES_PASSWORD: anorton
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres:/data/postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - db-schema
+    restart: unless-stopped
+
+networks:
+  db-schema:
+    driver: bridge

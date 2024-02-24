@@ -1,0 +1,17 @@
+version: '2'
+sql:
+  - name: address
+    schema: address_service/schema.sql
+    queries: address_service/query.sql
+    engine: postgresql
+    database:
+      uri: "postgres://anorton:anorton@localhost:5433/postgres"
+    gen:
+      go:
+        package: db
+        sql_package: pgx/v5
+        out: address_service/db
+        overrides:
+          - column: "address.id"
+            go_type: "uint64"
+

@@ -1,0 +1,45 @@
+[versions]
+postgresql = "42.7.1"
+jooq = "3.18.10"
+protobuf = "3.25.2"
+grpc = "1.60.0"
+grpcKotlin = "1.4.1"
+kotlinCoroutines = "1.7.3"
+reactorGrpc = "1.2.4"
+scala = "3.3.1"
+
+[plugins]
+testLogger = { id = "com.adarshr.test-logger", version = "4.0.0" }
+dockerCompose = { id = "com.avast.gradle.docker-compose", version = "0.17.5" }
+protobuf = { id = "com.google.protobuf", version = "0.9.4" }
+jooq = { id = "nu.studer.jooq", version = "8.2" }
+kotlin = { id = "org.jetbrains.kotlin.jvm", version = "2.0.0-Beta3" }
+flyway = { id = "org.flywaydb.flyway", version = "8.0.0" }
+
+[libraries]
+protobuf = { module = "com.google.protobuf:protobuf-java-util", version.ref = "protobuf" }
+grpcProtobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
+grpcServices = { module = "io.grpc:grpc-services", version.ref = "grpc" }
+grpcNetty = { module = "io.grpc:grpc-netty", version.ref = "grpc" }
+
+kotlinCoroutinesReactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "kotlinCoroutines" }
+kotlinCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinCoroutines" }
+protobufKotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobuf" }
+grpcKotlinStub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpcKotlin" }
+jooqKotlin = { module = "org.jooq:jooq-kotlin", version.ref = "jooq" }
+jooqKotlinCoroutines = { module = "org.jooq:jooq-kotlin-coroutines", version.ref = "jooq" }
+
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+hikari = { module = "com.zaxxer:HikariCP", version = "5.1.0" }
+
+logbackCore = { module="ch.qos.logback:logback-core", version="1.4.12" }
+logbackClassic = { module="ch.qos.logback:logback-classic", version="1.4.11" }
+slf4j = { module="org.slf4j:slf4j-api", version="2.0.9" }
+
+kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test" }
+
+[bundles]
+database = [ "postgresql", "hikari" ]
+protobuf = [ "protobuf", "grpcProtobuf", "grpcServices", "grpcNetty" ]
+logging = [ "logbackCore", "logbackClassic", "slf4j" ]
+kotlin = [ "kotlinCoroutines", "kotlinCoroutinesReactor", "protobufKotlin", "grpcKotlinStub", "jooqKotlin", "jooqKotlinCoroutines" ]

@@ -1,0 +1,92 @@
+plugins {
+  id "application"
+  id "scala"
+  alias libs.plugins.testLogger
+  alias libs.plugins.protobuf
+  alias libs.plugins.jooq
+}
+
+repositories {
+  mavenCentral()
+  google()
+  maven {
+    url = "https://mvnrepository.com/artfiact/com.zaxxer/HikariCP"
+  }
+}
+
+group = 'com.github.fidgetting'
+version = '0.0.1'
+
+application {
+  mainClass = "Main"
+}
+
+dependencies {
+  implementation libs.bundles.database
+  implementation libs.bundles.protobuf
+  implementation libs.bundles.logging
+  implementation libs.bundles.scala
+
+  jooqGenerator libs.postgresql
+}
+
+testlogger {
+  showFullStackTraces = true
+  showPassed = true
+  showSkipped = true
+  showFailed = true
+  showSummary = true
+  slowThreshold = 1000
+  logLevel = LogLevel.QUIET
+}
+
+protobuf {
+  protoc {
+    artifact = "com.google.protobuf:protoc:${libs.versions.protobuf.get()}"
+  }
+  plugins {
+    grpc {
+      artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc.get()}"
+    }
+    reactor {
+      artifact = "com.salesforce.servicelibs:reactor-grpc:${libs.versions.reactorGrpc.get()}"
+    }
+  }
+  generateProtoTasks {
+    all().forEach {
+      it.plugins {
+        grpc { }
+        reactor { }
+      }
+      it.builtins {
+        java { }
+      }
+    }
+  }
+}
+
+jooq {
+  configurations {
+    main {
+      generationTool {
+        logging = org.jooq.meta.jaxb.Logging.WARN
+        jdbc {
+          driver = "org.postgresql.Driver"
+          url = "jdbc:postgresql://localhost:5433/postgres"
+          user= "anorton"
+          password = "anorton"
+        }
+        generator {
+          name = "org.jooq.codegen.DefaultGenerator"
+          database {
+            name = "org.jooq.meta.postgres.PostgresDatabase"
+            inputSchema = "public"
+          }
+          target {
+            packageName = "com.github.fidgetting.schema"
+          }
+        }
+      }
+    }
+  }
+}

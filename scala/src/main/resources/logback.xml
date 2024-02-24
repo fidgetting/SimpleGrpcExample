@@ -1,0 +1,14 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%highlight([%level] %logger{15}) %message%n%xException{10}</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.jooq.tools.LoggerListener" level="info"/>
+
+  <root level="info">
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+</configuration>
