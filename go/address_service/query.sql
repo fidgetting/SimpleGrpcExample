@@ -3,6 +3,15 @@ SELECT *
 FROM address
 WHERE id = $1;
 
+-- name: GetAddresses :many
+SELECT *
+FROM address
+WHERE id = ANY($1::bigint[]);
+
+-- name: GetAllAddresses :many
+SELECT *
+FROM address;
+
 -- name: CreateAddress :one
 INSERT INTO address (address)
 VALUES ($1)

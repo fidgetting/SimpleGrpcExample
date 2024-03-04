@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package com.github.fidgetting.go;
+package address;
 
 option go_package="/proto";
 
 message Address {
-  uint64 id = 1;
+  int64 id = 1;
 
   repeated string lines = 2;
 

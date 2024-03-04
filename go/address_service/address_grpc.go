@@ -37,6 +37,33 @@ func (a *AddressGrpc) GetAddress(ctx context.Context, in *proto.GetAddressReques
 	return &proto.GetAddressResponse{Address: result}, nil
 }
 
+func (a *AddressGrpc) GetAddresses(in *proto.GetAddressesRequest, out proto.AddressService_GetAddressesServer) error {
+	var results []db.Address
+	var err error
+	if len(in.Ids) == 0 {
+		results, err = a.Repository.GetAllAddresses(out.Context())
+	} else {
+		results, err = a.Repository.GetAddresses(out.Context(), in.Ids)
+	}
+	if err != nil {
+		return err
+	}
+
+	for _, result := range results {
+		address, err := fromRecord(result)
+		if err != nil {
+			return err
+		}
+
+		err = out.Send(&proto.GetAddressesResponse{Address: address})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (a *AddressGrpc) SetAddress(ctx context.Context, in *proto.SetAddressRequest) (*proto.SetAddressResponse, error) {
 	json, err := protojson.Marshal(in.Address)
 	if err != nil {
@@ -45,7 +72,7 @@ func (a *AddressGrpc) SetAddress(ctx context.Context, in *proto.SetAddressReques
 
 	record := db.Address{}
 	if in.Address.Id != 0 {
-		record, err = a.Repository.UpsertAddress(ctx, db.UpsertAddressParams{ID: in.Address.Id, Address: json})
+		record, err = a.Repository.UpsertAddress(ctx, db.UpsertAddressParams{ID: uint64(in.Address.Id), Address: json})
 	} else {
 		record, err = a.Repository.CreateAddress(ctx, json)
 	}
@@ -85,6 +112,6 @@ func fromRecord(record db.Address) (*proto.Address, error) {
 	if err != nil {
 		return nil, err
 	}
-	result.Id = record.ID
+	result.Id = int64(record.ID)
 	return result, nil
 }

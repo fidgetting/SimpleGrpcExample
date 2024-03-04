@@ -23,7 +23,7 @@ func main() {
 	defer conn.Close(ctx)
 	repository := db.New(conn)
 
-	port := 50052
+	port := 50051
 	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
 	if err != nil {
 		log.Fatalf("Unable to list on port %v: %v", port, err)
