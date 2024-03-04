@@ -1,11 +1,9 @@
 
 plugins {
   id 'application'
-  alias libs.plugins.testLogger
+  id 'java'
   alias libs.plugins.protobuf
   alias libs.plugins.jooq
-  alias libs.plugins.kotlin
-  alias libs.plugins.flyway
 }
 
 repositories {
@@ -19,37 +17,17 @@ repositories {
 group = 'com.github.fidgetting'
 version = '0.0.1'
 
-test {
-  useJUnitPlatform()
-}
-
-kotlin {
-  jvmToolchain(21)
-}
-
 application {
-  mainClassName = 'com.github.fidgetting.MainKt'
+  mainClassName = 'com.github.fidgetting.Main'
 }
 
 dependencies {
   implementation libs.bundles.database
   implementation libs.bundles.protobuf
   implementation libs.bundles.logging
-  implementation libs.bundles.kotlin
+  implementation libs.apacheAnnotations
 
   jooqGenerator libs.postgresql
-
-  testImplementation libs.bundles.test
-}
-
-testlogger {
-  showFullStackTraces = true
-  showPassed = true
-  showSkipped = true
-  showFailed = true
-  showSummary = true
-  slowThreshold = 1000
-  logLevel = LogLevel.QUIET
 }
 
 protobuf {
@@ -60,28 +38,17 @@ protobuf {
     grpc {
       artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc.get()}"
     }
-    grpckt {
-      artifact = "io.grpc:protoc-gen-grpc-kotlin:${libs.versions.grpcKotlin.get()}:jdk8@jar"
-    }
   }
   generateProtoTasks {
     all().forEach {
       it.plugins {
         grpc { }
-        grpckt { }
       }
       it.builtins {
-        kotlin { }
+        java { }
       }
     }
   }
-}
-
-flyway {
-  driver = "org.postgresql.Driver"
-  url = "jdbc:postgresql://localhost:5433/postgres"
-  user= "anorton"
-  password = "anorton"
 }
 
 jooq {
@@ -96,7 +63,7 @@ jooq {
           password = "anorton"
         }
         generator {
-          name = "org.jooq.codegen.KotlinGenerator"
+          name = "org.jooq.codegen.JavaGenerator"
           database {
             name = "org.jooq.meta.postgres.PostgresDatabase"
             inputSchema = "public"
@@ -104,17 +71,8 @@ jooq {
           target {
             packageName = "com.github.fidgetting.schema"
           }
-          generate {
-            kotlinNotNullPojoAttributes = true
-            kotlinNotNullRecordAttributes = true
-            kotlinNotNullInterfaceAttributes = true
-         }
        }
      }
    }
   }
-}
-
-tasks.named("generateJooq").configure {
-  dependsOn tasks.named("flywayMigrate")
 }

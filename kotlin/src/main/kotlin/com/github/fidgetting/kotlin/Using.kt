@@ -1,5 +1,6 @@
 package com.github.fidgetting.kotlin
 
+import io.grpc.Server
 import java.io.Closeable
 import java.util.Collections
 
@@ -11,6 +12,15 @@ object Using {
     fun <T: Closeable> using(closable: T): T {
       closables.addFirst(closable)
       return closable
+    }
+
+    fun using(server: Server): Server {
+      closables.addFirst(Closeable { server.shutdown() })
+      return server
+    }
+
+    fun using(f: () -> Unit) {
+      closables.addFirst(Closeable { f() })
     }
 
     override fun close() {

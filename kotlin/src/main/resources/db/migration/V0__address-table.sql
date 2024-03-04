@@ -1,8 +1,8 @@
 
-CREATE TABLE address (
-    id       bigserial not null primary key,
-    address  jsonb not null,
-    added_at timestamp not null default now()
+CREATE TABLE IF NOT EXISTS address (
+    id       BIGSERIAL NOT NULL PRIMARY KEY,
+    address  JSONB NOT NULL,
+    added_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
 ALTER SEQUENCE address_id_seq RESTART WITH 1;

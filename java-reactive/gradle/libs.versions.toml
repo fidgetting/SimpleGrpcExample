@@ -1,10 +1,9 @@
 [versions]
+postgresql = "42.7.1"
 jooq = "3.18.10"
 protobuf = "3.25.2"
 grpc = "1.60.0"
 reactorGrpc = "1.2.4"
-scala = "3.3.1"
-scalaPb = "0.11.15"
 r2dbc = "1.0.1.RELEASE"
 
 [plugins]
@@ -16,24 +15,19 @@ protobuf = { module = "com.google.protobuf:protobuf-java-util", version.ref = "p
 grpcProtobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
 grpcServices = { module = "io.grpc:grpc-services", version.ref = "grpc" }
 grpcNetty = { module = "io.grpc:grpc-netty", version.ref = "grpc" }
-
-scalaLib = { module = "org.scala-lang:scala3-library_3", version.ref = "scala" }
 grpcReactor = { module = "com.salesforce.servicelibs:reactor-grpc-stub", version.ref = "reactorGrpc" }
-javaxAnnotations = { module = "javax.annotation:javax.annotation-api", version = "1.3.2" }
-jooq = { module = "org.jooq:jooq", version.ref = "jooq" }
-reactor = { module = "io.projectreactor:reactor-core", version = "3.6.2" }
-scalaPbJson = { module = "com.thesamet.scalapb:scalapb-json4s_3", version = "0.12.1" }
+apacheAnnotations = { module = "org.apache.tomcat:annotations-api", version = "6.0.53" }
 
 postgresqlJDBC = { module = "org.postgresql:postgresql", version = "42.7.1" }
 postgresqlR2DBC = { module = "org.postgresql:r2dbc-postgresql", version = "1.0.4.RELEASE" }
 r2dbcPool = { module = "io.r2dbc:r2dbc-pool", version.ref = "r2dbc" }
+jooq = { module = "org.jooq:jooq", version.ref = "jooq" }
 
-logbackCore = { module="ch.qos.logback:logback-core", version="1.4.14" }
+logbackCore = { module="ch.qos.logback:logback-core", version="1.4.12" }
 logbackClassic = { module="ch.qos.logback:logback-classic", version="1.4.11" }
 slf4j = { module="org.slf4j:slf4j-api", version="2.0.9" }
 
 [bundles]
-database = [ "postgresqlJDBC", "postgresqlR2DBC", "r2dbcPool" ]
-protobuf = [ "protobuf", "grpcProtobuf", "grpcServices", "grpcNetty" ]
+database = [ "postgresqlR2DBC", "r2dbcPool", "jooq" ]
+protobuf = [ "protobuf", "grpcProtobuf", "grpcServices", "grpcNetty", "grpcReactor"  ]
 logging = [ "logbackCore", "logbackClassic", "slf4j" ]
-scala = [ "scalaLib", "grpcReactor", "javaxAnnotations", "jooq", "reactor", "scalaPbJson" ]

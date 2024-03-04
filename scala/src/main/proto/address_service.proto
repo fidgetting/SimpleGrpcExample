@@ -1,11 +1,14 @@
 syntax = "proto3";
 
-package com.github.fidgetting.scala;
+package address;
+
+option java_package = "com.github.fidgetting";
 
 import "address.proto";
 
 service AddressService {
   rpc getAddress(GetAddressRequest) returns (GetAddressResponse);
+  rpc getAddresses(GetAddressesRequest) returns (stream GetAddressesResponse);
   rpc setAddress(SetAddressRequest) returns (SetAddressResponse);
   rpc removeAddress(RemoveAddressRequest) returns (RemoveAddressResponse);
 }
@@ -15,6 +18,14 @@ message GetAddressRequest {
 }
 
 message GetAddressResponse {
+  Address address = 1;
+}
+
+message GetAddressesRequest {
+  repeated uint64 ids = 1;
+}
+
+message GetAddressesResponse {
   Address address = 1;
 }
 

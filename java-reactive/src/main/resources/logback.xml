@@ -1,0 +1,15 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%highlight([%level] %logger{15}) %message%n%xException{10}</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="com.github.fidgetting.util.GRPC" level="debug"/>
+  <logger name="org.jooq.tools.LoggerListener" level="debug"/>
+
+  <root level="info">
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+</configuration>

@@ -1,4 +1,4 @@
-package com.github.fidgetting.scala
+package com.github.fidgetting.util
 
 import org.slf4j.{Logger, LoggerFactory}
 

@@ -1,8 +1,14 @@
 syntax = "proto3";
 
-package com.github.fidgetting.scala;
+package address;
+
+option java_package = "com.github.fidgetting";
+
+import "scalapb/scalapb.proto";
 
 message Address {
+  option (scalapb.message).no_box = true;
+
   uint64 id = 1;
 
   repeated string lines = 2;

@@ -1,0 +1,31 @@
+[versions]
+postgresql = "42.7.1"
+jooq = "3.18.10"
+protobuf = "3.25.2"
+grpc = "1.61.0"
+testContainers = "1.19.6"
+
+[plugins]
+protobuf = { id = "com.google.protobuf", version = "0.9.4" }
+jooq = { id = "nu.studer.jooq", version = "8.2" }
+
+[libraries]
+protobuf = { module = "com.google.protobuf:protobuf-java-util", version.ref = "protobuf" }
+grpcProtobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
+grpcServices = { module = "io.grpc:grpc-services", version.ref = "grpc" }
+grpcStub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
+grpcNetty = { module = "io.grpc:grpc-netty-shaded", version.ref = "grpc" }
+apacheAnnotations = { module = "org.apache.tomcat:annotations-api", version = "6.0.53" }
+
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+hikari = { module = "com.zaxxer:HikariCP", version = "5.1.0" }
+jooq = { module = "org.jooq:jooq", version.ref = "jooq" }
+
+logbackCore = { module="ch.qos.logback:logback-core", version="1.4.12" }
+logbackClassic = { module="ch.qos.logback:logback-classic", version="1.4.11" }
+slf4j = { module="org.slf4j:slf4j-api", version="2.0.9" }
+
+[bundles]
+database = [ "postgresql", "hikari", "jooq" ]
+protobuf = [ "protobuf", "grpcProtobuf", "grpcServices", "grpcStub", "grpcNetty" ]
+logging = [ "logbackCore", "logbackClassic", "slf4j" ]

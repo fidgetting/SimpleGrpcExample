@@ -1,27 +1,27 @@
-import com.github.fidgetting.scala.{AddressRepository, AddressService}
-import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
-import io.grpc.{Server, ServerBuilder}
-import io.grpc.protobuf.services.ProtoReflectionService
+package com.github.fidgetting
 
-import scala.util.chaining.scalaUtilChainingOps
+import com.github.fidgetting.{AddressRepository, AddressService}
+import com.github.fidgetting.util.Logging
+import com.github.fidgetting.util.R2DBC
+import io.grpc.protobuf.services.ProtoReflectionService
+import io.grpc.{Server, ServerBuilder}
+
 import scala.util.Using
 import scala.util.Using.Releasable
 
 object Main {
+  val logger = Logging.loggerOf[AddressService]
+
   def main(args: Array[String]): Unit = {
     Using.Manager { use =>
-      val dbConn = use(
-        HikariDataSource(
-          HikariConfig().tap { config =>
-            config.setDriverClassName("org.postgresql.Driver")
-            config.setJdbcUrl("jdbc:postgresql://localhost:5433/postgres")
-            config.setUsername("anorton")
-            config.setPassword("anorton")
-          }
-        )
+      val dbPool = R2DBC.createPool(
+        host = "localhost",
+        port = 5433,
+        username = "anorton",
+        password = "anorton"
       )
 
-      val repository = AddressRepository(dbConn)
+      val repository = AddressRepository(dbPool)
       val server = use(
         ServerBuilder
           .forPort(Option(System.getenv("ADDRESS_PORT")).map(_.toInt).getOrElse(50051))
@@ -30,6 +30,7 @@ object Main {
           .build()
       )
 
+      logger.info("Starting AddressService")
       server.start()
       server.awaitTermination()
     }

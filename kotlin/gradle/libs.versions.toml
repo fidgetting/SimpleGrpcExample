@@ -5,12 +5,10 @@ protobuf = "3.25.2"
 grpc = "1.60.0"
 grpcKotlin = "1.4.1"
 kotlinCoroutines = "1.7.3"
-reactorGrpc = "1.2.4"
-scala = "3.3.1"
+testContainers = "1.19.6"
 
 [plugins]
 testLogger = { id = "com.adarshr.test-logger", version = "4.0.0" }
-dockerCompose = { id = "com.avast.gradle.docker-compose", version = "0.17.5" }
 protobuf = { id = "com.google.protobuf", version = "0.9.4" }
 jooq = { id = "nu.studer.jooq", version = "8.2" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version = "2.0.0-Beta3" }
@@ -37,9 +35,12 @@ logbackClassic = { module="ch.qos.logback:logback-classic", version="1.4.11" }
 slf4j = { module="org.slf4j:slf4j-api", version="2.0.9" }
 
 kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test" }
+testContainers = { module = "org.testcontainers:junit-jupiter", version.ref = "testContainers" }
+testContainersPostgres = { module = "org.testcontainers:postgresql", version.ref = "testContainers" }
 
 [bundles]
 database = [ "postgresql", "hikari" ]
 protobuf = [ "protobuf", "grpcProtobuf", "grpcServices", "grpcNetty" ]
 logging = [ "logbackCore", "logbackClassic", "slf4j" ]
 kotlin = [ "kotlinCoroutines", "kotlinCoroutinesReactor", "protobufKotlin", "grpcKotlinStub", "jooqKotlin", "jooqKotlinCoroutines" ]
+test = [ "kotlinTest", "testContainers", "testContainersPostgres" ]

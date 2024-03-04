@@ -1,7 +1,8 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform;
+
 plugins {
   id "application"
   id "scala"
-  alias libs.plugins.testLogger
   alias libs.plugins.protobuf
   alias libs.plugins.jooq
 }
@@ -18,7 +19,7 @@ group = 'com.github.fidgetting'
 version = '0.0.1'
 
 application {
-  mainClass = "Main"
+  mainClass = "com.github.fidgetting.Main"
 }
 
 dependencies {
@@ -27,17 +28,7 @@ dependencies {
   implementation libs.bundles.logging
   implementation libs.bundles.scala
 
-  jooqGenerator libs.postgresql
-}
-
-testlogger {
-  showFullStackTraces = true
-  showPassed = true
-  showSkipped = true
-  showFailed = true
-  showSummary = true
-  slowThreshold = 1000
-  logLevel = LogLevel.QUIET
+  jooqGenerator libs.postgresqlJDBC
 }
 
 protobuf {
@@ -51,12 +42,22 @@ protobuf {
     reactor {
       artifact = "com.salesforce.servicelibs:reactor-grpc:${libs.versions.reactorGrpc.get()}"
     }
+    scalapb {
+      artifact = (DefaultNativePlatform.getCurrentOperatingSystem().isWindows()) ?
+          "com.thesamet.scalapb:protoc-gen-scala:${libs.versions.scalaPb.get()}:windows@bat" :
+          "com.thesamet.scalapb:protoc-gen-scala:${libs.versions.scalaPb.get()}:unix@sh"
+    }
   }
   generateProtoTasks {
     all().forEach {
       it.plugins {
         grpc { }
         reactor { }
+        scalapb {
+          option 'java_conversions'
+          option 'ascii_format_to_string'
+          option 'no_lenses'
+        }
       }
       it.builtins {
         java { }
@@ -89,4 +90,16 @@ jooq {
       }
     }
   }
+}
+
+sourceSets {
+  main {
+    scala {
+      srcDirs "${protobuf.generatedFilesBaseDir}/main/scalapb"
+    }
+  }
+}
+
+jar {
+  duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
 }
