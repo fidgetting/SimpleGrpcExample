@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.util.HashSet;
 
 import static com.github.fidgetting.util.GRPC.exception;
+import static com.github.fidgetting.util.GRPC.monoError;
 import static io.grpc.Status.*;
 
 public class AddressService extends AddressServiceImplBase {
@@ -34,7 +35,7 @@ public class AddressService extends AddressServiceImplBase {
 
     return repository
         .get(request.getId())
-        .switchIfEmpty(Mono.error(exception(NOT_FOUND, "No Address found for " + request.getId())))
+        .switchIfEmpty(monoError(NOT_FOUND, "No Address found for " + request.getId()))
         .map(address -> GetAddressResponse.newBuilder().setAddress(address).build());
   }
 
@@ -51,14 +52,14 @@ public class AddressService extends AddressServiceImplBase {
   public Mono<SetAddressResponse> setAddress(SetAddressRequest request) {
     return repository
         .set(request.getAddress())
-        .switchIfEmpty(Mono.error(exception(INTERNAL, "Unable to set address " + request.getAddress())))
+        .switchIfEmpty(monoError(INTERNAL, "Unable to set address " + request.getAddress()))
         .map(address -> SetAddressResponse.newBuilder().setAddress(address).build());
   }
 
   @Override
   public Mono<RemoveAddressResponse> removeAddress(RemoveAddressRequest request) {
     if (request.getId() == 0) {
-      return Mono.error(exception(INVALID_ARGUMENT, "Must provide Address ID in request"));
+      return monoError(INVALID_ARGUMENT, "Must provide Address ID in request");
     }
 
     return repository

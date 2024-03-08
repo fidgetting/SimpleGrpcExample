@@ -5,7 +5,7 @@
     </encoder>
   </appender>
 
-  <logger name="org.jooq.tools.LoggerListener" level="info"/>
+  <logger name="org.jooq.tools.LoggerListener" level="debug"/>
 
   <root level="info">
     <appender-ref ref="STDOUT"/>

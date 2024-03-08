@@ -11,6 +11,7 @@ import io.grpc.ServerInterceptor;
 import io.grpc.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 import static io.grpc.Status.INTERNAL;
 
@@ -24,6 +25,14 @@ public class GRPC {
 
   public static RuntimeException exception(Status status, String message, Exception cause) {
     return status.withDescription(message).withCause(cause).asRuntimeException();
+  }
+
+  public static <T> Mono<T> monoError(Status status, String message) {
+    return Mono.error(exception(status, message));
+  }
+
+  public static <T> Mono<T> monoError(Status status, String message, Exception cause) {
+    return Mono.error(exception(status, message, cause));
   }
 
   public static Server server(int port, BindableService... services) {

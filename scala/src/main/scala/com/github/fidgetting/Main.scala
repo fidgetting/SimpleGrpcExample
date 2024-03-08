@@ -1,8 +1,7 @@
 package com.github.fidgetting
 
 import com.github.fidgetting.{AddressRepository, AddressService}
-import com.github.fidgetting.util.Logging
-import com.github.fidgetting.util.R2DBC
+import com.github.fidgetting.util.{Logging, R2DBC}
 import io.grpc.protobuf.services.ProtoReflectionService
 import io.grpc.{Server, ServerBuilder}
 
@@ -21,11 +20,10 @@ object Main {
         password = "anorton"
       )
 
-      val repository = AddressRepository(dbPool)
       val server = use(
         ServerBuilder
           .forPort(Option(System.getenv("ADDRESS_PORT")).map(_.toInt).getOrElse(50051))
-          .addService(AddressService(repository))
+          .addService(AddressService(AddressRepository(dbPool)))
           .addService(ProtoReflectionService.newInstance())
           .build()
       )

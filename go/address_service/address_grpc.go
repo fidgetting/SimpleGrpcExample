@@ -5,6 +5,7 @@ import (
 	"addr/address_service/proto"
 	"context"
 	"errors"
+	"github.com/hashicorp/go-multierror"
 	"github.com/jackc/pgx/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -49,19 +50,21 @@ func (a *AddressGrpc) GetAddresses(in *proto.GetAddressesRequest, out proto.Addr
 		return err
 	}
 
+	var errorResult error
 	for _, result := range results {
 		address, err := fromRecord(result)
 		if err != nil {
-			return err
+			errorResult = multierror.Append(errorResult, err)
+			continue
 		}
 
 		err = out.Send(&proto.GetAddressesResponse{Address: address})
 		if err != nil {
-			return err
+			errorResult = multierror.Append(errorResult, err)
 		}
 	}
 
-	return nil
+	return errorResult
 }
 
 func (a *AddressGrpc) SetAddress(ctx context.Context, in *proto.SetAddressRequest) (*proto.SetAddressResponse, error) {
