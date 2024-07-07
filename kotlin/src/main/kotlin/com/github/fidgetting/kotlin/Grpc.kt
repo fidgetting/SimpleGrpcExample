@@ -7,10 +7,10 @@ import io.grpc.ForwardingServerCallListener.SimpleForwardingServerCallListener
 object Grpc {
 
   fun Status.exception(message: String): Throwable =
-    this.withDescription(message).asException()
+    this.withDescription(message).asRuntimeException()
 
   fun Status.exception(message: String, cause: Throwable): Throwable =
-    this.withDescription(message).withCause(cause).asException()
+    this.withDescription(message).withCause(cause).asRuntimeException()
 
   class LoggingInterceptor: ServerInterceptor {
     val logger = Logging.loggerOf<Grpc>()
@@ -34,7 +34,7 @@ object Grpc {
           }
           super.sendMessage(message)
         }
-      }`
+      }
 
       return object: SimpleForwardingServerCallListener<ReqT>(next?.startCall(listener, headers)) {
         override fun onMessage(message: ReqT) {

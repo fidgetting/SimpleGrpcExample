@@ -19,6 +19,7 @@ protobuf = { module = "com.google.protobuf:protobuf-java-util", version.ref = "p
 grpcProtobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
 grpcServices = { module = "io.grpc:grpc-services", version.ref = "grpc" }
 grpcNetty = { module = "io.grpc:grpc-netty", version.ref = "grpc" }
+grpcInProcess = { module = "io.grpc:grpc-inprocess", version.ref = "grpc" }
 
 kotlinCoroutinesReactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "kotlinCoroutines" }
 kotlinCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinCoroutines" }
@@ -29,6 +30,7 @@ jooqKotlinCoroutines = { module = "org.jooq:jooq-kotlin-coroutines", version.ref
 
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 hikari = { module = "com.zaxxer:HikariCP", version = "5.1.0" }
+flyway = { module = "org.flywaydb:flyway-database-postgresql", version = "10.15.2" }
 
 logbackCore = { module="ch.qos.logback:logback-core", version="1.4.12" }
 logbackClassic = { module="ch.qos.logback:logback-classic", version="1.4.11" }
@@ -37,10 +39,11 @@ slf4j = { module="org.slf4j:slf4j-api", version="2.0.9" }
 kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test" }
 testContainers = { module = "org.testcontainers:junit-jupiter", version.ref = "testContainers" }
 testContainersPostgres = { module = "org.testcontainers:postgresql", version.ref = "testContainers" }
+mockito = { module = "org.mockito.kotlin:mockito-kotlin", version = "5.3.1" }
 
 [bundles]
-database = [ "postgresql", "hikari" ]
+database = [ "postgresql", "hikari", "flyway" ]
 protobuf = [ "protobuf", "grpcProtobuf", "grpcServices", "grpcNetty" ]
 logging = [ "logbackCore", "logbackClassic", "slf4j" ]
 kotlin = [ "kotlinCoroutines", "kotlinCoroutinesReactor", "protobufKotlin", "grpcKotlinStub", "jooqKotlin", "jooqKotlinCoroutines" ]
-test = [ "kotlinTest", "testContainers", "testContainersPostgres" ]
+test = [ "kotlinTest", "testContainers", "testContainersPostgres", "grpcInProcess", "mockito" ]

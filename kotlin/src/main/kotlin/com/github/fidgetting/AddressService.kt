@@ -33,13 +33,21 @@ class AddressService(val repository: AddressRepository): AddressServiceCoroutine
   }
 
   override fun getAddresses(request: GetAddressesRequest): Flow<GetAddressesResponse> {
-    val addresses: Flow<Address> =
-      if (request.idsList.isEmpty()) repository.getAll()
-      else repository.get(request.idsList.toSet())
-    return addresses.map { addr -> getAddressesResponse { address = addr } }
+    return when {
+      request.idsList.isEmpty() -> repository.getAll()
+      else                      -> repository.get(request.idsList.toSet())
+    }.map { addr ->
+      getAddressesResponse {
+        address = addr
+      }
+    }
   }
 
   override suspend fun setAddress(request: SetAddressRequest): SetAddressResponse {
+    if (request.address.id == 0L) {
+      throw INVALID_ARGUMENT.exception("Invalid address id: ${request.address.id}")
+    }
+
     return setAddressResponse {
       address = repository.set(request.address)
         ?: throw INTERNAL.exception("Unable to set address: ${request.address}")

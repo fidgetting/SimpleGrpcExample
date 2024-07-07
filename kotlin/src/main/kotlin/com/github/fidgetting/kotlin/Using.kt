@@ -6,10 +6,10 @@ import java.util.Collections
 
 object Using {
 
-  class UsingManager: Closeable {
-    val closables = Collections.synchronizedList(mutableListOf<Closeable>())
+  class UsingManager: AutoCloseable {
+    val closables = Collections.synchronizedList(mutableListOf<AutoCloseable>())
 
-    fun <T: Closeable> using(closable: T): T {
+    fun <T: AutoCloseable> using(closable: T): T {
       closables.addFirst(closable)
       return closable
     }
